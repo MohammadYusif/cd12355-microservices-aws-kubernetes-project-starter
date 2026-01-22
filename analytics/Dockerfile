@@ -1,5 +1,5 @@
 # analytics/Dockerfile
-FROM python:3.10-slim
+FROM 131546748473.dkr.ecr.us-east-1.amazonaws.com/base/python:3.10-slim
 
 # Prevent Python from writing pyc files and enable unbuffered logs
 ENV PYTHONDONTWRITEBYTECODE=1
