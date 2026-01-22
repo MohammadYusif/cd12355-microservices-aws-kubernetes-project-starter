@@ -1,0 +1,36 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: us-east-1
+    IMAGE_REPO_NAME: analytics
+    IMAGE_TAG: latest
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - REPOSITORY_URI=${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}
+      - aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      - echo "ECR Repo URI: ${REPOSITORY_URI}"
+
+  build:
+    commands:
+      - echo "Build started on $(date)"
+      - echo "Building the Docker image..."
+      - docker build -t ${REPOSITORY_URI}:${IMAGE_TAG} -f analytics/Dockerfile analytics
+
+  post_build:
+    commands:
+      - echo "Build completed on $(date)"
+      - echo "Pushing the Docker image..."
+      - docker push ${REPOSITORY_URI}:${IMAGE_TAG}
+      - echo "Writing image definitions..."
+      - printf '[{"name":"analytics","imageUri":"%s"}]' ${REPOSITORY_URI}:${IMAGE_TAG} > imagedefinitions.json
+      - echo "Done."
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    - deployment/**/*
