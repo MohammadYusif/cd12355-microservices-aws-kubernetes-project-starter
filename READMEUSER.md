@@ -19,4 +19,4 @@ This ensures the service is only marked available when it can successfully commu
 Logs confirm that the application runs without errors and periodically queries the database, printing analytics results.
 Application logs can be viewed using kubectl logs, and build logs are available in Amazon CloudWatch through the CodeBuild log group.
 
-This project demonstrates a complete CI/CD workflow and a production-style Kubernetes deployment on AWS.
+This project demonstrates a complete CI/CD workflow and a production-style Kubernetes deployment on AWS..
